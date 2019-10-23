@@ -41,19 +41,27 @@ changerJoueur(2,1).
 finJeuEgalite(LCP) :- grillePleine(LCP), write('Egalité !').
 
 %%%Conditions de victoire
+
 %%Victoire à l'horizontale
 victoireLigne([J,J,J,J,_,_,_],J,1).
 victoireLigne([_,J,J,J,J,_,_],J,1).
 victoireLigne([_,_,J,J,J,J,_],J,1).
 victoireLigne([_,_,_,J,J,J,J],J,1).
 victoireLigne(_,_,0).
-victoireHorizontale([],_,_).
+victoireHorizontale([],_):-fail.
 victoireHorizontale([L|_],J):- victoireLigne(L,J,R),R==1.
 victoireHorizontale([L|G],J):- victoireLigne(L,J,R),R==0,victoireHorizontale(G,J).
 
 %%Victoire à la verticale
-victoireVerticale(G,J) :- transforme
+victoireColonne([J,J,J,J,_,_],J).
+victoireColonne([_,J,J,J,J,_],J).
+victoireColonne([_,_,J,J,J,J],J).
 
+recupererCol([],_,[]).
+recupererCol([L|G],I,[R1|R]):-trouverElement(I,R1,L),recupererCol(G,I,R).
+
+victoireVerticale([],_,_) :- fail.
+victoireVerticale(G,I,J) :- recupererCol(G,I,R), I1 is I+1, (victoireColonne(R,J);victoireVerticale(G,I1,J)).
 
 %%Victoire à la diagonale
 
