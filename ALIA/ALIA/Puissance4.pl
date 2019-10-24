@@ -1,24 +1,24 @@
-%%%%Dénomination des paramètres
-%Grille : G (Liste des lignes de 7 éléments)
+%%%%DÃ©nomination des paramÃ¨tres
+%Grille : G (Liste des lignes de 7 Ã©lÃ©ments)
 %Joueur : J
-%Coup : C (liste à deux éléments, i et j. i la ligne et j la colonne)
+%Coup : C (liste Ã  deux Ã©lÃ©ments, i et j. i la ligne et j la colonne)
 %Liste des coups possibles : LCP
 
 
 
 
 %%%%Commencer le jeu  : Initialisation de la grille et de la lcp
-%grille de départ de 6*7 vide.
-%Le joueur 1 démarre.
+%grille de dÃ©part de 6*7 vide.
+%Le joueur 1 dÃ©marre.
 init :- jouer([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 1,
                    [[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]]).
 
-%Récupérer l'élément d'un liste à l'indice i
+%RÃ©cupÃ©rer l'Ã©lÃ©ment d'un liste Ã  l'indice i
 trouverElement(1,X,[X|_]).
 trouverElement(N1,X,[_|L]) :- trouverElement(N,X,L), N1 is N+1.
 
-%Récupérer un élement d'une liste à deux dimensions à l'indice [I][J]
+%RÃ©cupÃ©rer un Ã©lement d'une liste Ã  deux dimensions Ã  l'indice [I][J]
 % trouverElement2Dimensions(I,J,Y,L):-trouverElement(I,X,L),trouverElement(J,Y,X).
 trouverElement2Dimensions(I,J,Y,L):- nth0(I,L,X),nth0(J,X,Y).
 
@@ -31,15 +31,15 @@ afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation(), aff
 
 %%%%Jouer
 %jouerCoup(G,J, LCP) :- afficherSeparation(),afficherPlateau(G).
-%Si le jeu est terminé, on affiche le gagnant
+%Si le jeu est terminÃ©, on affiche le gagnant
 
 jouer(G,_,LCP) :- finJeuVictoire(G,J), gagnant(J), !, afficherSeparation(),afficherPlateau(G).
-jouer(G,_,LCP) :-finJeuEgalite(LCP), writeln('Egalité !'), afficherSeparation(),afficherPlateau(G).
+jouer(G,_,LCP) :-finJeuEgalite(LCP), writeln('EgalitÃ© !'), afficherSeparation(),afficherPlateau(G).
 %Sinon, on joue
 jouer(G,J,LCP) :- write("C'est au tour de :"), writeln(J),
     afficherSeparation(),
     afficherPlateau(G),
-    aleatoire(LCP,C), %Sélectionner le coup à jouer grâce à une heuristique
+    aleatoire(LCP,C), %SÃ©lectionner le coup Ã  jouer grÃ¢ce Ã  une heuristique
     write('Coup choisi : '),
     writeln(C),
     jouerCoup(G,C,NouvG,J), %Jouer le coup et recuperer la nouvelle grille
@@ -47,22 +47,22 @@ jouer(G,J,LCP) :- write("C'est au tour de :"), writeln(J),
     changerJoueur(J, Jsuivant), %changer de joueur pour le tour suivant
     jouer(NouvG,Jsuivant,NouvLCP).
 
-%modifier LCP après avoir joué un coup
+%modifier LCP aprÃ¨s avoir jouÃ© un coup
 %trouver le coup possible suivant s'il existe
-%incremente(nouveau coup déterminé à partir du coup joué, coup joué)
+%incremente(nouveau coup dÃ©terminÃ© Ã  partir du coup jouÃ©, coup jouÃ©)
 increment_CP([Z|Y],[X|Y]):- X>0, Z is X-1.
 increment_CP([],[0|_]).
 
-%supprimer le coup déjà joué de la liste des coups possibles
+%supprimer le coup dÃ©jÃ  jouÃ© de la liste des coups possibles
 supprimer_CP(C,[C|L],R):- supprimer_CP(C,L,R).
 supprimer_CP(C,[X|L],[X|R]) :- supprimer_CP(C,L,R) ,X\==C.
 supprimer_CP(_,[],[]).
 
-%Ajouter le nouveau coup à la liste des coups possibles
+%Ajouter le nouveau coup Ã  la liste des coups possibles
 modifier(LCP,[0|X],NouvLCP):- supprimer_CP([0|X],LCP,NouvLCP).
 modifier(LCP,C,[NouvC|NouvLCP]) :-  increment_CP(NouvC,C), supprimer_CP(C,LCP,NouvLCP),NouvC\==[].
 
-%%Jouer un coup (et mettre à jour la grille)
+%%Jouer un coup (et mettre Ã  jour la grille)
 %IndColonne l'indice de la colonne dans laquelle J joue
 %IndLigne l'indice de la ligne dans laquelle J joue
 %nouvG la nouvelle grille
@@ -72,8 +72,8 @@ remplacer([H|T],I,X,[H|R]) :- I>0, I1 is I-1, remplacer(T,I1,X,R).
 recupIndLigne(C, IndLigne) :- trouverElement(1,IndLigne,C).
 recupIndColonne(C, IndColonne) :- trouverElement(2, IndColonne, C).
 jouerCoup(G,C,NouvG,J) :- recupIndLigne(C, IndLigne), recupIndColonne(C, IndColonne),
-    nth0(IndLigne, G, L), %Récupération de la ligne à jouer
-    remplacer(L, IndColonne, J, NouvL), %Placement du pion à l'ind colonne
+    nth0(IndLigne, G, L), %RÃ©cupÃ©ration de la ligne Ã  jouer
+    remplacer(L, IndColonne, J, NouvL), %Placement du pion Ã  l'ind colonne
     remplacer(G, IndLigne, NouvL, NouvG). %Remplacement de la ligne dans la grille
 
 %%%%Changer de joueur
@@ -95,13 +95,11 @@ finJeuVictoire(G, 1):- victoireHorizontale(G,1);victoireVerticale(G,1,1); victoi
 finJeuVictoire(G, 2):- victoireHorizontale(G,2);victoireVerticale(G,1,2); victoireDiagonale1(G,0,0,2,0,0,0), victoireDiagonale2(G,0,6,2,0,0,0).
 gagnant(J) :-  write('Game Over. Gagnant :'), writeln(J).
 
-% finJeuVictoire(G,J) :- victoireHorizontale(G,J);
-% victoireVerticale(G,1,J); victoireDiagonale1(G,0,0,J,0,0,0),
-% victoireDiagonale2(G,0,6,J,0,0,0).
+
 
 %%%Conditions de victoire
 
-%%Victoire à l'horizontale
+%%Victoire Ã  l'horizontale
 victoireLigne([J,J,J,J,_,_,_],J,1).
 victoireLigne([_,J,J,J,J,_,_],J,1).
 victoireLigne([_,_,J,J,J,J,_],J,1).
@@ -112,7 +110,7 @@ victoireHorizontale([L|_],J):- victoireLigne(L,J,R),R==1.
 victoireHorizontale([L|G],J):- victoireLigne(L,J,R),R==0,victoireHorizontale(G,J).
 
 
-%%Victoire à la verticale
+%%Victoire Ã  la verticale
 victoireColonne([J,J,J,J,_,_],J).
 victoireColonne([_,J,J,J,J,_],J).
 victoireColonne([_,_,J,J,J,J],J).
@@ -124,7 +122,7 @@ victoireVerticale([],_,_) :- fail.
 victoireVerticale(G,I,J) :- recupererCol(G,I,R), I1 is I+1, (victoireColonne(R,J);victoireVerticale(G,I1,J)).
 
 
-%%Victoire à la diagonale
+%%Victoire Ã  la diagonale
 %%Victoire en diagonale sens 1
 victoireDiagonale1(_,_,_,_,4,_,_).
 victoireDiagonale1(_,I,K,_,_,_,_):- I>5,K>6,fail.
