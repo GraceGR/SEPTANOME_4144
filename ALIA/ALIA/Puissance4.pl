@@ -86,9 +86,37 @@ changerJoueur(2,1).
 
 
 %%%%Heuristiques
-%%%%Random
-%Choisir un coup au hasard dans la liste de coups possibles.
+%%%Random
+%%Choisir un coup au hasard dans la liste de coups possibles.
 aleatoire(LCP,C) :- random_member(C,LCP).
+
+%%%Heuristique 2 : Attaque
+%attaque(G,LCP,J,C):-parcoursLCP(G,LCP,J,C,_).
+%% CMAX : Coup max et MAX : max associé au coup
+%parcoursLCP(_,[],_,[],0).
+%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-parcoursDirections(G,J,C,M),testMax(C,M,CMAX,MAX),parcoursLCP(G,LCP,J,CMAX,MAX).
+%testMax(C,M,CMAX,MAX,C1,M1):- M>MAX,M1 is M,C1 is C.
+%testMax(_,_,_,_).
+
+%%ca ou ...
+%parcoursLCP(G,[C|LCP],J,C,M):- parcoursDirections(G,J,C,M),M>MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
+%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-  parcoursDirections(G,J,C,M),M=<MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
+%%ca
+%parcoursLCP(G,[C|LCP],J,C,M):- parcoursDirections(G,J,CMAX,MAX),M>MAX,parcoursLCP(G,LCP,J,C,M).
+%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-  parcoursDirections(G,J,C,M),M=<MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
+
+%parcoursDirections(G,J,C,M):-parcoursLigneDG(G,J,C,M1),parcoursLigneGD(G,J,C,M2),parcoursColonneDG(G,J,C,M3),parcoursColonneGD(G,J,C,M4),parcoursDiagonale11(G,J,C,M5),parcoursDiagonale12(G,J,C,M6),parcoursDiagonale21(G,J,C,M7),parcoursDiagonale22(G,J,C,M8),calculMax(M1,M2,M3,M4,M5,M6,M7,M8,M).
+
+%%Ligne Gauche Droite GD
+%%Ligne Droite Gauche DG
+%%Colonne Gauche Droite GD
+%%Colonne DG
+%%Diagonale HG BD
+%%Diagonale HD BG
+
+%%% Heuristique 3 : Attaque et défense mais privilégier l'attaque en
+%%% cas d'égalité
+
 
 %%%%Conditions de fin du jeu
 
