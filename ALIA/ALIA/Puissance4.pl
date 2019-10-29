@@ -5,7 +5,7 @@
 %Liste des coups possibles : LCP
 
 %Importation des heuristiques
-:- use_module(h_3).
+:- use_module(h3).
 
 
 %%%%Commencer le jeu  : Initialisation de la grille et de la lcp
