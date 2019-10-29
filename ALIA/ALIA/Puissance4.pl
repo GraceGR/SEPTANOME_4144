@@ -26,25 +26,24 @@ trouverElement2Dimensions(I,J,Y,L):- nth0(I,L,X),nth0(J,X,Y).
 
 %%Affichage du plateau
 %Afficher les séparations entre les lignes de la grille
-afficherSeparation() :- write('|---+---+---+---+---+---+---|'),write('\n').
+afficherSeparation :- write('|---+---+---+---+---+---+---|'),write('\n').
 %Afficher tous les elements X1 d'une ligne L1 et si on arrive à la fin de la ligne, on saute une ligne
 afficherLigne([]) :- write('\n').
 afficherLigne([X1|L1]) :- write(' '), write(X1), write(' '),write('|'), afficherLigne(L1).
 %Afficher les lignes L de la grille G
 afficherPlateau([]).
-afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation(), afficherPlateau(G).
+afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, afficherPlateau(G).
 
 %%%%Jouer
 %jouerCoup(G,J, LCP) :- afficherSeparation(),afficherPlateau(G).
 %Si le jeu est terminé, on affiche le gagnant
 
-jouer(G,_,LCP) :- finJeuVictoire(G,J), gagnant(J), !, afficherSeparation(),afficherPlateau(G).
-jouer(G,_,LCP) :-finJeuEgalite(LCP), writeln('Egalité !'), afficherSeparation(),afficherPlateau(G).
+jouer(G,_,LCP) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J).
+jouer(G,_,LCP) :-finJeuEgalite(LCP), writeln('Egalité !'), afficherSeparation,afficherPlateau(G).
 %Sinon, on joue
-jouer(G,J,LCP) :- write("C'est au tour de :"), writeln(J),
-    afficherSeparation(),
-    afficherPlateau(G),
-    attaque(G,LCP,J,C), %Sélectionner le coup à jouer grâce à une heuristique
+jouer(G,J,LCP) :-afficherSeparation, afficherPlateau(G),
+     write("C'est au tour de :"), writeln(J),
+    jouerAvecHeuristique(G,LCP,J,C), %Sélectionner le coup à jouer grâce à une heuristique
     write('Coup choisi : '),
     writeln(C),
     jouerCoup(G,C,NouvG,J), %Jouer le coup et recuperer la nouvelle grille
@@ -53,11 +52,10 @@ jouer(G,J,LCP) :- write("C'est au tour de :"), writeln(J),
     jouer(NouvG,Jsuivant,NouvLCP).
 
 %Choix des heuristiques pour chaque joueur
-% jouerAvecHeuristique(G,LCP,1,C) :- attaque(G,LCP,1,C). %Le joueur 1
-% joue avec l'heuristique d'attaque
-% jouerAvecHeuristique(G,LCP,2,C) :- attaque(G,LCP,2,C). %Le joueur 1
-% joue avec l'heuristique d'attaque
-
+jouerAvecHeuristique(G,LCP,J,C) :-  J==1, attaque(G,LCP,J,C). %Le joueur 1 joue avec l'heuristique d'attaque
+%jouerAvecHeuristique(G,LCP,J,C) :- J==2, aleatoire(LCP,C). %Le joueur 2
+% joue à l'aléatoire
+jouerAvecHeuristique(G,LCP,J,C) :- J==2, attaque(G,LCP,J,C). %2 joue à l'attaque
 
 %modifier LCP après avoir joué un coup
 %trouver le coup possible suivant s'il existe
@@ -98,32 +96,7 @@ changerJoueur(2,1).
 %%Choisir un coup au hasard dans la liste de coups possibles.
 aleatoire(LCP,C) :- random_member(C,LCP).
 
-%%%Heuristique 2 : Attaque
-%attaque(G,LCP,J,C):-parcoursLCP(G,LCP,J,C,_).
-%% CMAX : Coup max et MAX : max associé au coup
-%parcoursLCP(_,[],_,[],0).
-%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-parcoursDirections(G,J,C,M),testMax(C,M,CMAX,MAX),parcoursLCP(G,LCP,J,CMAX,MAX).
-%testMax(C,M,CMAX,MAX,C1,M1):- M>MAX,M1 is M,C1 is C.
-%testMax(_,_,_,_).
-
-%%ca ou ...
-%parcoursLCP(G,[C|LCP],J,C,M):- parcoursDirections(G,J,C,M),M>MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
-%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-  parcoursDirections(G,J,C,M),M=<MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
-%%ca
-%parcoursLCP(G,[C|LCP],J,C,M):- parcoursDirections(G,J,CMAX,MAX),M>MAX,parcoursLCP(G,LCP,J,C,M).
-%parcoursLCP(G,[C|LCP],J,CMAX,MAX):-  parcoursDirections(G,J,C,M),M=<MAX,parcoursLCP(G,LCP,J,CMAX,MAX).
-
-%parcoursDirections(G,J,C,M):-parcoursLigneDG(G,J,C,M1),parcoursLigneGD(G,J,C,M2),parcoursColonneDG(G,J,C,M3),parcoursColonneGD(G,J,C,M4),parcoursDiagonale11(G,J,C,M5),parcoursDiagonale12(G,J,C,M6),parcoursDiagonale21(G,J,C,M7),parcoursDiagonale22(G,J,C,M8),calculMax(M1,M2,M3,M4,M5,M6,M7,M8,M).
-
-%%Ligne Gauche Droite GD
-%%Ligne Droite Gauche DG
-%%Colonne Gauche Droite GD
-%%Colonne DG
-%%Diagonale HG BD
-%%Diagonale HD BG
-
-%%% Heuristique 3 : Attaque et défense mais privilégier l'attaque en
-%%% cas d'égalité
+%%%Heuristique 3 : Attaque
 
 
 %%%%Conditions de fin du jeu
