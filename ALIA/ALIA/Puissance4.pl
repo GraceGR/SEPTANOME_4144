@@ -30,8 +30,11 @@ trouverElement2Dimensions(I,J,Y,L):- nth0(I,L,X),nth0(J,X,Y).
 %Afficher les séparations entre les lignes de la grille
 afficherSeparation :- write('|---+---+---+---+---+---+---|'),write('\n').
 %Afficher tous les elements X1 d'une ligne L1 et si on arrive à la fin de la ligne, on saute une ligne
+afficherPion(J) :- J==1, write('X').
+afficherPion(J) :- J==2, write('O').
+afficherPion(J) :- J==0, write(' ').
 afficherLigne([]) :- write('\n').
-afficherLigne([X1|L1]) :- write(' '), write(X1), write(' '),write('|'), afficherLigne(L1).
+afficherLigne([X1|L1]) :- write(' '), afficherPion(X1), write(' '),write('|'), afficherLigne(L1).
 %Afficher les lignes L de la grille G
 afficherPlateau([]).
 afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, afficherPlateau(G).
@@ -41,7 +44,7 @@ afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, affic
 %Si le jeu est terminé, on affiche le gagnant
 
 jouer(G,_,LCP) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J).
-jouer(G,_,LCP) :-finJeuEgalite(LCP), writeln('Egalité !'), afficherSeparation,afficherPlateau(G).
+jouer(G,_,LCP) :-finJeuEgalite(LCP), afficherSeparation,afficherPlateau(G),writeln('Egalité !').
 %Sinon, on joue
 jouer(G,J,LCP) :-afficherSeparation, afficherPlateau(G),
      write("C'est au tour de :"), writeln(J),

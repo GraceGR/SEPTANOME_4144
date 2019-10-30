@@ -10,7 +10,7 @@
 % plus de pions possibles) sauf dans le cas ou l'adversaire est sur le
 % point de gagner (3 pions alignes) et dans ce cas on jouera le contre.
 
-heuristique4(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJ(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison1(M1,M2,C1,C2,C).
+heuristique4(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison1(M1,M2,C1,C2,C).
 
 %Si on peut gagner, on joue le coup attaque
 comparaison1(M1,_,C1,_,C1):-M1==30.
@@ -18,10 +18,6 @@ comparaison1(M1,_,C1,_,C1):-M1==30.
 comparaison1(M1,M2,_,C2,C2):-M2==30,M1\==30.
 %Dans tous les autres cas, on attaque
 comparaison1(_,_,C1,_,C1).
-
-%%%%Changer de joueur
-changerJ(1,2).
-changerJ(2,1).
 
 % Recuperer le meilleur coup possible C de la liste des
 % coups possibles LCP, a jouer dans la grille G dans une optique

@@ -8,7 +8,7 @@
 % (dans les 8 sens) pour chaque coup et on joue a la position ayant le
 % nombre de pions max, qu'il s'agisse d'une attaque ou d'une defense.
 
-heuristique5(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJ(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison2(M1,M2,C1,C2,C).
+heuristique5(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison2(M1,M2,C1,C2,C).
 
 %Si on peut gagner, on joue le coup attaque
 comparaison2(M1,_,C1,_,C1):-M1==30.
@@ -19,10 +19,6 @@ comparaison2(M1,M2,_,C2,C2):-M2==30,M1\==30.
 comparaison2(M1,M2,C1,_,C1):-M1>=M2.
 % Si la defense a un max strictement plus grand que l'attaque, on defend
 comparaison2(M1,M2,_,C2,C2):-M2>M1.
-
-%%%%Changer de joueur
-changerJ(1,2).
-changerJ(2,1).
 
 % Recuperer le meilleur coup possible C de la liste des
 % coups possibles LCP, a jouer dans la grille G dans une optique
