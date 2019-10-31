@@ -1,8 +1,10 @@
-%%%%Dénomination des paramètres
+%Puissance 4 version 2 : un joueur affronte une IA.
+%%%Dénomination des paramètres
 %Grille : G (Liste des lignes de 7 éléments)
 %Joueur : J
 %Coup : C (liste à deux éléments, i et j. i la ligne et j la colonne)
 %Liste des coups possibles : LCP
+
 
 %Importation des heuristiques
 :- use_module(h3).
@@ -13,11 +15,16 @@
 %%%%Commencer le jeu  : Initialisation de la grille et de la lcp
 %grille de départ de 6*7 vide.
 %Le joueur 1 démarre.
-init :- jouer([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],
+init :- writeln('Votre partie avec la machine va bientôt démarrer. Vous êtes le joueur 1 (X)'),
+    writeln('Rappels : pour le choix de vos coups, les numéros de lignes et de colonnes sont décalés de 1. La 1ère ligne a pour indice 0, la deuxième 1, etc.'),
+writeln('Ainsi, le coup [5,3] correspond à la colonne 4 de la 6ème ligne.'),
+writeln("Attention à la liste des coups possibles, vous ne pouvez pas jouer dans des cases qui ne s'y trouvent pas, comme dans un Puissance 4 classique."),
+    writeln('Bon jeu !'),
+    jouer([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 1,
                    [[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]]).
 
-%Récupérer l'élément d'un liste à l'indice N1 et le résultat va dans X
+%Récupérer l'élément d'une liste à l'indice N1 et le résultat va dans X
 %Récuperer les indices de l'element X et le resultat va dans N1
 trouverElement(1,X,[X|_]).
 trouverElement(N1,X,[_|L]) :- trouverElement(N,X,L), N1 is N+1.
@@ -40,7 +47,6 @@ afficherPlateau([]).
 afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, afficherPlateau(G).
 
 %%%%Jouer
-%jouerCoup(G,J, LCP) :- afficherSeparation(),afficherPlateau(G).
 %Si le jeu est terminé, on affiche le gagnant
 
 jouer(G,_,LCP) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J).
@@ -48,7 +54,7 @@ jouer(G,_,LCP) :-finJeuEgalite(LCP), afficherSeparation,afficherPlateau(G),write
 %Sinon, on joue
 jouer(G,J,LCP) :-afficherSeparation, afficherPlateau(G),
      write("C'est au tour de :"), writeln(J),
-    jouerAvecHeuristique(G,LCP,J,C), %Sélectionner le coup à jouer grâce à une heuristique
+     choisirCoup(G,LCP,J,C), %Sélectionner le coup à jouer grâce à une heuristique ou une saisie au clavier
     write('Coup choisi : '),
     writeln(C),
     jouerCoup(G,C,NouvG,J), %Jouer le coup et recuperer la nouvelle grille
@@ -57,8 +63,16 @@ jouer(G,J,LCP) :-afficherSeparation, afficherPlateau(G),
     jouer(NouvG,Jsuivant,NouvLCP).
 
 %Choix des heuristiques pour chaque joueur
-jouerAvecHeuristique(G,LCP,J,C) :-  J==1, heuristique4(G,LCP,J,C). %Le joueur 1 joue avec l'heuristique attaque et defense orientee attaque
-jouerAvecHeuristique(G,LCP,J,C) :- J==2, heuristique5(G,LCP,J,C). %2 joue avec l'heuristique attaque/défense
+choisirCoup(G,LCP,J,C) :-  J==1, recupererCoupJoueur(G,LCP,J,C).
+choisirCoup(G,LCP,J,C) :- J==2, heuristique5(G,LCP,J,C). %L'IA joue suivant l'heuristique attaque/défense équilibrée.
+
+
+%%Recuperation du coup du joueur au clavier
+recupererCoupJoueur(G,LCP,J,C) :- writeln('Liste des coups possibles :'), afficher_LCP(LCP), repeat, write('Saisir le coup que vous souhaitez jouer (ex : [5,3]) :'), read(C),
+    (   trouverElement(_,C,LCP), ! ; fail). %On continue tant que le coup choisi n'est pas dans la liste de coup possibles.
+
+afficher_LCP([]) :- writeln('').
+afficher_LCP([C|LCP]) :- write(C),write(', '),afficher_LCP(LCP).
 
 %modifier LCP après avoir joué un coup
 %trouver le coup possible suivant s'il existe
