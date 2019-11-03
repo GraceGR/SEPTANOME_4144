@@ -1,14 +1,14 @@
-%%%Heuristique 5 : Attaque et defense equilibrees
+%%%Heuristique 4 : Attaque et defense equilibrees
 
 :-use_module(puissance4).
-:-use_module(h3).
+:-use_module(h2).
 
 % Ni l'attaque ni la defense ne sont privilegiee. Dans la liste
 % des coups possibles, on calcule le nombre de pions alignes
 % (dans les 8 sens) pour chaque coup et on joue a la position ayant le
 % nombre de pions max, qu'il s'agisse d'une attaque ou d'une defense.
 
-heuristique5(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison2(M1,M2,C1,C2,C).
+heuristique4(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison2(M1,M2,C1,C2,C).
 
 %Si on peut gagner, on joue le coup attaque
 comparaison2(M1,_,C1,_,C1):-M1==30.
