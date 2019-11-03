@@ -1,7 +1,7 @@
-%%%Heuristique 4 : Attaque et defense oriente attaque
+%%%Heuristique 3 : Attaque et defense oriente attaque
 
 :-use_module(puissance4).
-:-use_module(h3).
+:-use_module(h2).
 
 % Recuperer le meilleur coup possible C de la liste des
 % coups possibles LCP, a jouer dans la grille G dans une optique
@@ -10,7 +10,7 @@
 % plus de pions possibles) sauf dans le cas ou l'adversaire est sur le
 % point de gagner (3 pions alignes) et dans ce cas on jouera le contre.
 
-heuristique4(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison1(M1,M2,C1,C2,C).
+heuristique3(G,LCP,J,C):-attaque(G,LCP,J,C1,M1),changerJoueur(J,Jsuiv),attaque(G,LCP,Jsuiv,C2,M2),comparaison1(M1,M2,C1,C2,C).
 
 %Si on peut gagner, on joue le coup attaque
 comparaison1(M1,_,C1,_,C1):-M1==30.
