@@ -2,7 +2,6 @@
 %Puissance 4.
 
 :- use_module(puissance4).
-:- use_module(h2).
 
 %%predicat trouverElement
 testTrouverElement1(X):- trouverElement(2,X,[a,b,c,d,e,f]).
@@ -116,6 +115,20 @@ testModifier4(NouvLCP) :- modifier([[5,0],[4,1],[5,2],[3,3]], [],NouvLCP).
 %Resultat attendu : false
 
 %%%Predicats utilises pour jouer un coup
+%%Predicat remplacer
+testRemplacer1(NouvL) :- remplacer([1,2,3,4], 0, 0, NouvL).
+%Resultat attendu : NouvL=[0,2,3,4]
+
+testRemplacer2(NouvL) :- remplacer([1,2,3,4], 2, 5, NouvL).
+%Resultat attendu : NouvL=[1,2,5,4]
+
+testRemplacer3(NouvL) :- remplacer([1,2,3,4], 6, 4, NouvL).
+%Resultat attendu : false
+
+testRemplacer4(NouvL) :- remplacer([], 6, 4, NouvL).
+%Resultat attendu : false
+
+
 %%Predicat recupIndLigne
 testRecupIndLigne1(IndL) :- recupIndLigne([3,1],IndL).
 %Resultat attendu : IndL = 3
@@ -126,6 +139,84 @@ testRecupIndLigne2(IndL) :- recupIndLigne([],IndL).
 %%Predicat recupIndColonne
 testRecupIndColonne1(IndC) :- recupIndColonne([6,4],IndC).
 %Resultat attendu : IndC = 4
+
 testRecupIndColonne2(IndC) :- recupIndColonne([],IndC).
-%
+%Resultat attendu : false
+
+%%Predicat jouerCoup
+testJouerCoup1(NouvG) :- jouerCoup([[0,0,0],[2,1,2],[0,1,0]],[0,1],NouvG,1).
+%Resultat attendu : NouvG=[[0,1,0],[2,1,2],[0,1,0]]
+
+testJouerCoup2(NouvG) :- jouerCoup([[0,1,0],[2,1,2],[0,1,0]],[2,0],NouvG,2).
+%Resultat attendu : NouvG=[[0,1,0],[2,1,2],[2,1,0]]
+
+testJouerCoup3(NouvG) :- jouerCoup([],[0,1],NouvG,1).
+%Resultat attendu : NouvG=false
+
+testJouerCoup4(NouvG) :- jouerCoup([[0,1,0],[2,1,2],[0,1,0]],[5,6],NouvG,2).
+%Resultat attendu : false.
+
+%%%Predicats pour les fins de jeu
+%%Predicat victoireHorizontale
+testVictoireHorizontale1 :- victoireHorizontale([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,2,1,2,1,0,0],[0,1,2,1,2,0,0],[0,2,1,2,1,0,0],[0,1,2,1,2,0,0]],1).
+%Resultat attendu : false
+
+testVictoireHorizontale2 :- victoireHorizontale([[0,0,0,0,0,0,0],[0,2,0,0,0,0,0],[0,2,2,2,2,0,0],[0,2,2,1,2,0,0],[0,2,1,2,1,0,0],[0,1,2,1,2,0,0]],2).
+%Resultat attendu : true
+
+%%Predicat victoireVerticale
+testVictoireVerticale1 :- victoireVerticale([[0,0,0,0,0,0,0],[0,2,0,0,0,0,0],[0,2,2,2,2,0,0],[0,2,2,1,2,0,0],[0,2,1,2,1,0,0],[0,1,2,1,2,0,0]],1,2).
+%Resultat attendu : true
+
+testVictoireVerticale2 :- victoireVerticale([[0,0,0,0,0,0,0],[0,2,0,0,0,0,0],[0,2,2,2,2,0,0],[0,1,2,1,2,0,0],[0,2,1,2,1,0,0],[0,1,2,1,2,0,0]],1,2).
+%Resultat attendu : false
+
+%%Predicat victoireDiagonale1
+testVictoireDiagonale1_1 :- victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,1,0,2,1],[0,1,1,1,2,1,1],[0,1,2,2,0,1,0],[0,1,2,0,1,0,0],[0,1,1,0,0,0,0]],0,0,2,0,0,0,0).
+%Resultat attendu : true
+
+testVictoireDiagonale1_2 :-victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,1,0,2,1],[0,1,1,1,0,1,1],[0,1,2,2,0,1,0],[0,1,2,0,1,0,0],[0,1,1,0,0,0,0]],0,0,2,0,0,0,0).
+%Resultat attendu : false
+
+testVictoireDiagonale1_3 :- victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,0,0,2,1],[0,1,1,1,2,1,1],[0,1,0,2,0,1,0],[0,1,2,2,1,0,0],[0,1,1,0,0,0,0]],0,0,2,0,0,0,0).
+%Resultat attendu : true
+
+testVictoireDiagonale1_4 :- victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,0,0,2,1],[0,1,1,1,0,1,1],[0,1,0,2,0,1,0],[0,1,2,2,1,0,0],[0,1,1,0,0,0,0]],0,0,2,0,0,0,0).
+%Resultat attendu : false
+
+testVictoireDiagonale1_5 :- victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,0,0,2,1],[0,1,1,1,2,1,1],[1,1,0,2,0,1,0],[0,1,2,2,1,0,0],[0,1,1,0,0,0,0]],0,0,1,0,0,0,0).
+%Resultat attendu : true
+
+testVictoireDiagonale1_6 :- victoireDiagonale1([[0,0,0,1,1,0,0],[0,0,1,0,0,2,1],[0,1,0,1,2,1,1],[2,0,0,2,0,1,0],[0,1,2,2,1,0,0],[0,1,1,0,0,0,0]],0,0,1,0,0,0,0).
+%Resultat attendu : false
+
+%%Predicat victoireDiagonale2
+testVictoireDiagonale2_1 :- victoireDiagonale2([[0,0,0,2,1,0,0],[0,0,1,1,2,1,1],[0,1,1,1,0,2,2],[0,1,1,1,1,2,2],[0,1,1,1,0,0,0],[0,1,1,2,0,0,0]],0,6,2,0,0,0,6).
+%Resultat attendu : true
+
+testVictoireDiagonale2_2 :- victoireDiagonale2([[0,0,2,1,1,0,0],[0,1,1,2,1,1,1],[0,1,1,1,0,1,2],[0,1,1,1,1,2,1],[0,1,1,1,0,0,2],[0,1,1,2,0,0,0]],0,6,2,0,0,0,6).
+%Resultat attendu : false
+
+%Predicat victoireDiagonale2
+testVictoireDiagonale2_3 :- victoireDiagonale2([[0,0,0,2,1,0,0],[0,0,1,1,2,1,1],[0,1,1,1,0,2,2],[0,1,1,1,1,2,2],[0,1,1,1,0,0,0],[0,1,1,2,0,0,0]],0,6,2,0,0,0,6).
+%Resultat attendu : true
+
+%Predicat victoireDiagonale2
+testVictoireDiagonale2_4 :- victoireDiagonale2([[0,0,2,1,1,0,0],[0,1,2,0,1,1,1],[0,1,1,2,0,1,2],[0,1,1,1,1,0,1],[0,1,1,1,0,2,1],[0,1,1,2,0,0,2]],0,6,2,0,0,0,6).
+%Resultat attendu : false
+
+%Predicat victoireDiagonale2
+testVictoireDiagonale2_5 :- victoireDiagonale2([[1,0,0,1,1,0,0],[2,0,0,0,1,1,1],[0,2,1,0,0,1,2],[0,1,2,2,1,0,1],[0,1,1,2,0,0,1],[0,1,1,1,0,2,0]],0,6,2,0,0,0,6).
+%Resultat attendu : true
+
+%Predicat victoireDiagonale2
+testVictoireDiagonale2_6 :- victoireDiagonale2([[1,0,0,1,1,0,0],[2,0,0,0,1,1,1],[0,2,1,0,0,1,2],[0,1,2,2,1,0,1],[0,1,1,1,0,0,1],[0,1,1,1,2,0,0]],0,6,2,0,0,0,6).
+%Resultat attendu : false
+
+%%Predicat grillePleine
+testGrillePleine1 :- grillePleine([]).
+%Resultat attendu : true
+
+testGrillePleine2 :- grillePleine([[1,2],[0,6]]).
+%Resultat attendu : false
 
