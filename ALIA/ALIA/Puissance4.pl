@@ -43,7 +43,7 @@ afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, affic
 %jouerCoup(G,J, LCP) :- afficherSeparation(),afficherPlateau(G).
 %Si le jeu est terminé, on affiche le gagnant
 
-jouer(G,_,LCP) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J).
+jouer(G,_,_) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J).
 jouer(G,_,LCP) :-finJeuEgalite(LCP), afficherSeparation,afficherPlateau(G),writeln('Egalité !').
 %Sinon, on joue
 jouer(G,J,LCP) :-afficherSeparation, afficherPlateau(G),
