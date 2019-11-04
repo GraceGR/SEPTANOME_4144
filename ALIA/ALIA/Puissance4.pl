@@ -107,8 +107,8 @@ aleatoire(LCP,C) :- random_member(C,LCP).
 %finJeuVictoire
 
 finJeuEgalite(LCP) :- grillePleine(LCP).
-finJeuVictoire(G, 1):- victoireHorizontale(G,1);victoireVerticale(G,1,1); victoireDiagonale1(G,0,0,1,0,0,0); victoireDiagonale2(G,0,6,1,0,0,0).
-finJeuVictoire(G, 2):- victoireHorizontale(G,2);victoireVerticale(G,1,2); victoireDiagonale1(G,0,0,2,0,0,0); victoireDiagonale2(G,0,6,2,0,0,0).
+finJeuVictoire(G, 1):- victoireHorizontale(G,1);victoireVerticale(G,1,1); victoireDiagonale1(G,0,0,1,0,0,0,0); victoireDiagonale2(G,0,6,1,0,0,0,6).
+finJeuVictoire(G, 2):- victoireHorizontale(G,2);victoireVerticale(G,1,2); victoireDiagonale1(G,0,0,2,0,0,0,0); victoireDiagonale2(G,0,6,2,0,0,0,6).
 gagnant(J) :-  write('Game Over. Gagnant :'), writeln(J).
 
 
@@ -151,13 +151,14 @@ victoireVerticale(G,I,J) :- recupererCol(G,I,R), I1 is I+1, (victoireColonne(R,J
 %Si CMTP = 4, alors la diagonale est victorieuse et on arrête.
 %Si on a fini le parcours de toute la grille, on arrete et on retourne fail.
 %Lorsque on dépasse les limites de la grille, on se replace au début de la diagonale suivante.
-victoireDiagonale1(_,_,_,_,4,_,_).
-victoireDiagonale1(_,I,K,_,_,_,_):- I>5,K>6,fail.
-victoireDiagonale1(G,I,K,J,CMPT,CMTI,CMTK):- I=<5,K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y==J,CMPT1 is CMPT + 1, I1 is I+1, K1 is K-1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale1(G,I1,K1,J,CMPT1,CMTI1,CMTK1).
-victoireDiagonale1(G,I,K,J,_,CMTI,CMTK):- I=<5, K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y\==J, I1 is I+1, K1 is K-1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale1(G,I1,K1,J,0,CMTI1,CMTK1).
-victoireDiagonale1(G,I,K,J,_,CMTI,CMTK):- K<0,K1 is CMTK + 1,I1 is I-CMTI,victoireDiagonale1(G,I1,K1,J,0,0,0).
-victoireDiagonale1(G,I,K,J,_,_,_):- K==7,I1 is I+1,victoireDiagonale1(G,I1,0,J,0,0,0).
-victoireDiagonale1(G,I,_,J,_,CMTI,_):- I==6, I1 is I-CMTI+1,victoireDiagonale1(G,I1,0,J,0,0,0).
+victoireDiagonale1(_,_,_,_,4,_,_,_).
+victoireDiagonale1(_,I,K,_,_,_,_,_):-I==5,K==6,fail.
+victoireDiagonale1(G,I,K,J,CMPT,CMTI,CMTK,TEMPK):- I=<5,K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y==J,CMPT1 is CMPT + 1, I1 is I+1, K1 is K-1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale1(G,I1,K1,J,CMPT1,CMTI1,CMTK1,TEMPK).
+victoireDiagonale1(G,I,K,J,_,CMTI,CMTK,TEMPK):- I=<5, K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y\==J, I1 is I+1, K1 is K-1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale1(G,I1,K1,J,0,CMTI1,CMTK1,TEMPK).
+victoireDiagonale1(G,I,K,J,_,CMTI,CMTK,_):- K<0,K1 is CMTK,I1 is I-CMTI,victoireDiagonale1(G,I1,K1,J,0,0,0,K1).
+victoireDiagonale1(G,I,K,J,_,_,_,_):- K==7,I1 is I+1,victoireDiagonale1(G,I1,0,J,0,0,0,0).
+victoireDiagonale1(G,I,_,J,_,CMTI,_,TEMPK):- I==6,TEMPK==6,I1 is I-CMTI+1,victoireDiagonale1(G,I1,0,J,0,0,0,0).
+victoireDiagonale1(G,I,_,J,_,CMTI,_,TEMPK):- I==6,TEMPK=<5,I1 is I-CMTI,K1 is TEMPK+1,victoireDiagonale1(G,I1,K1,J,0,0,0,K1).
 
 %%Victoire en diagonale sens 2 : haut gauche et bas droit
 %Parcourir la grille G et récupérer l'element à l'indice [I][K]. Si il est égal à J alors, on incrémente notre compteur CMPT et on poursuit
@@ -166,14 +167,14 @@ victoireDiagonale1(G,I,_,J,_,CMTI,_):- I==6, I1 is I-CMTI+1,victoireDiagonale1(G
 %Si CMTP = 4, alors la diagonale est victorieuse et on arrête.
 %Si on a fini le parcours de toute la grille, on arrete et on retourne fail.
 %Lorsque on dépasse les limites de la grille, on se replace au début de la diagonale suivante.
-victoireDiagonale2(_,_,_,_,4,_,_).
-victoireDiagonale2(_,I,K,_,_,_,_):- I>5,K<0,fail.
-victoireDiagonale2(G,I,K,J,CMPT,CMTI,CMTK):- I=<5,K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y==J,CMPT1 is CMPT + 1, I1 is I+1, K1 is K+1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale2(G,I1,K1,J,CMPT1,CMTI1,CMTK1).
-victoireDiagonale2(G,I,K,J,_,CMTI,CMTK):- I=<5, K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y\==J, I1 is I+1, K1 is K+1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale2(G,I1,K1,J,0,CMTI1,CMTK1).
-victoireDiagonale2(G,I,K,J,_,_,_):- K<0,I1 is I+1,victoireDiagonale2(G,I1,6,J,0,0,0).
-victoireDiagonale2(G,I,K,J,_,CMTI,CMTK):- K==7,I1 is I-CMTI,K1 is K-CMTK-1,victoireDiagonale2(G,I1,K1,J,0,0,0).
-victoireDiagonale2(G,I,_,J,_,CMTI,_):- I==6, I1 is I-CMTI+1,victoireDiagonale2(G,I1,6,J,0,0,0).
-
+victoireDiagonale2(_,_,_,_,4,_,_,_).
+victoireDiagonale2(_,I,K,_,_,_,_,_):-I==5,K==0,fail.
+victoireDiagonale2(G,I,K,J,CMPT,CMTI,CMTK,TEMPK):- I=<5,K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y==J,CMPT1 is CMPT + 1, I1 is I+1, K1 is K+1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale2(G,I1,K1,J,CMPT1,CMTI1,CMTK1,TEMPK).
+victoireDiagonale2(G,I,K,J,_,CMTI,CMTK,TEMPK):- I=<5, K=<6,K>=0,trouverElement2Dimensions(I,K,Y,G),Y\==J, I1 is I+1, K1 is K+1,CMTI1 is CMTI +1, CMTK1 is CMTK +1,victoireDiagonale2(G,I1,K1,J,0,CMTI1,CMTK1,TEMPK).
+victoireDiagonale2(G,I,K,J,_,_,_,_):- K<0,I1 is I+1,victoireDiagonale2(G,I1,6,J,0,0,0,6).
+victoireDiagonale2(G,I,K,J,_,CMTI,CMTK,_):- K==7,I1 is I-CMTI,K1 is K-CMTK-1,victoireDiagonale2(G,I1,K1,J,0,0,0,K1).
+victoireDiagonale2(G,I,_,J,_,CMTI,_,TEMPK):- I==6,TEMPK==0, I1 is I-CMTI+1,victoireDiagonale2(G,I1,6,J,0,0,0,6).
+victoireDiagonale2(G,I,_,J,_,CMTI,_,TEMPK):- I==6,TEMPK>0,TEMPK=<5,I1 is I-CMTI,K1 is TEMPK-1,victoireDiagonale2(G,I1,K1,J,0,0,0,K1).
 
 %%Grille pleine
 %On regarde si la liste des coups possibles LCP est vide. Si c'est le cas la partie est terminée.
