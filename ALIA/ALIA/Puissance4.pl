@@ -1,7 +1,7 @@
 %%%%Denomination des parametres
 %Grille : G (Liste des lignes de 7 éléments)
 %Joueur : J
-%Coup : C (liste a deux éléments, i et j. i la ligne et j la colonne)
+%Coup : C (liste a deux elements, i et j. i la ligne et j la colonne)
 %Liste des coups possibles : LCP
 
 %Importation des heuristiques
