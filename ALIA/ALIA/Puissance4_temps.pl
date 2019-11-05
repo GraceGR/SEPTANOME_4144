@@ -5,19 +5,17 @@
 %Liste des coups possibles : LCP
 
 %Importation des heuristiques
+:- use_module(h2).
 :- use_module(h3).
 :- use_module(h4).
-:- use_module(h5).
 :- use_module(library(statistics)).
-
 
 %%%%Commencer le jeu  : Initialisation de la grille et de la lcp
 %grille de départ de 6*7 vide.
 %Le joueur 1 démarre.
-init :-
-    jouer([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],
+init :- jouer([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 1,
-                   [[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]],0,0,[1],[2]).
+                   [[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]],0,0,[],[],1,2).
 
 %Récupérer l'élément d'un liste à l'indice N1 et le résultat va dans X
 %Récuperer les indices de l'element X et le resultat va dans N1
@@ -44,11 +42,10 @@ afficherPlateau([L|G]) :- write('|'),afficherLigne(L), afficherSeparation, affic
 %%%%Jouer
 %jouerCoup(G,J, LCP) :- afficherSeparation(),afficherPlateau(G).
 %Si le jeu est terminé, on affiche le gagnant
-
-jouer(G,_,LCP,NbCoup1,NbCoup2,Temps1,Temps2) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J,NbCoup1, NbCoup2, Temps1, Temps2).
-jouer(G,_,LCP,NbCoup1, NbCoup2, Temps1, Temps2) :-finJeuEgalite(LCP), afficherSeparation,afficherPlateau(G),writeln('Egalité !').
+jouer(G,_,_,NbCoup1,NbCoup2,Temps1,Temps2,J1,J2) :- finJeuVictoire(G,J),!, afficherSeparation,afficherPlateau(G), gagnant(J,NbCoup1, NbCoup2, Temps1, Temps2,J1,J2).
+jouer(G,_,LCP,NbCoup1, NbCoup2, Temps1, Temps2,J1,J2) :-finJeuEgalite(LCP), afficherSeparation,afficherPlateau(G),writeln('Egalité !'),gagnant(_,NbCoup1, NbCoup2, Temps1, Temps2,J1,J2).
 %Sinon, on joue
-jouer(G,J,LCP,NbCoup1, NbCoup2, Temps1, Temps2) :- statistics(runtime,[Start|_]),afficherSeparation, afficherPlateau(G),
+jouer(G,J,LCP,NbCoup1, NbCoup2, Temps1, Temps2,J1,J2) :- statistics(runtime,[Start|_]),afficherSeparation, afficherPlateau(G),
      write("C'est au tour de :"), writeln(J),
     jouerAvecHeuristique(G,LCP,J,C), %Sélectionner le coup à jouer grâce à une heuristique
     write('Coup choisi : '),
@@ -58,16 +55,13 @@ jouer(G,J,LCP,NbCoup1, NbCoup2, Temps1, Temps2) :- statistics(runtime,[Start|_])
     changerJoueur(J, Jsuivant), %changer de joueur pour le tour suivant
     statistics(runtime,[Stop|_]),
     Runtime is Stop - Start,
-    %writeln('temps de run :'),
-    %writeln(Runtime),
-    %writeln(Temps1),
-    %writeln(Temps2),
     NbCoup1prim is NbCoup1 + 1,
-    jouer(NouvG,Jsuivant,NouvLCP,NbCoup2,NbCoup1prim,Temps2,[Runtime|Temps1]).
+    jouer(NouvG,Jsuivant,NouvLCP,NbCoup2,NbCoup1prim,Temps2,[Runtime|Temps1],J2,J1).
+
 
 %Choix des heuristiques pour chaque joueur
-jouerAvecHeuristique(G,LCP,J,C) :-  J==1, heuristique4(G,LCP,J,C). %Le joueur 1 joue avec l'heuristique attaque et defense orientee attaque
-jouerAvecHeuristique(G,LCP,J,C) :- J==2, heuristique5(G,LCP,J,C). %2 joue avec l'heuristique attaque/défense
+jouerAvecHeuristique(G,LCP,J,C) :-  J==1, heuristique3(G,LCP,J,C). %Le joueur 1 joue avec l'heuristique attaque
+jouerAvecHeuristique(G,LCP,J,C) :- J==2, attaque(G,LCP,J,C). %2 joue avec l'heuristique attaque/défense
 
 %modifier LCP après avoir joué un coup
 %trouver le coup possible suivant s'il existe
@@ -93,7 +87,7 @@ remplacer([H|T],I,X,[H|R]) :- I>0, I1 is I-1, remplacer(T,I1,X,R).
 
 recupIndLigne(C, IndLigne) :- trouverElement(1,IndLigne,C).
 recupIndColonne(C, IndColonne) :- trouverElement(2, IndColonne, C).
-jouerCoup(G,C,NouvG,J) :-recupIndLigne(C, IndLigne), recupIndColonne(C, IndColonne),
+jouerCoup(G,C,NouvG,J) :- recupIndLigne(C, IndLigne), recupIndColonne(C, IndColonne),
     nth0(IndLigne, G, L), %Récupération de la ligne à jouer
     remplacer(L, IndColonne, J, NouvL), %Placement du pion à l'ind colonne
     remplacer(G, IndLigne, NouvL, NouvG). %Remplacement de la ligne dans la grille
@@ -108,7 +102,7 @@ changerJoueur(2,1).
 %%Choisir un coup au hasard dans la liste de coups possibles.
 aleatoire(LCP,C) :- random_member(C,LCP).
 
-%%%Heuristique 3 : Attaque
+
 
 
 %%%%Conditions de fin du jeu
@@ -118,9 +112,10 @@ aleatoire(LCP,C) :- random_member(C,LCP).
 finJeuEgalite(LCP) :- grillePleine(LCP).
 finJeuVictoire(G, 1):- victoireHorizontale(G,1);victoireVerticale(G,1,1); victoireDiagonale1(G,0,0,1,0,0,0); victoireDiagonale2(G,0,6,1,0,0,0).
 finJeuVictoire(G, 2):- victoireHorizontale(G,2);victoireVerticale(G,1,2); victoireDiagonale1(G,0,0,2,0,0,0); victoireDiagonale2(G,0,6,2,0,0,0).
-gagnant(J,NbCoup1,NbCoup2,Temps1, Temps2) :-  write('Game Over. Gagnant :'), writeln(J), gagnantStat(NbCoup1,Temps1),gagnantStat(NbCoup2,Temps2).
+gagnant(J,NbCoup1,NbCoup2,Temps1, Temps2,J1,J2) :-  write('Game Over. Gagnant :'), writeln(J), gagnantStat(NbCoup1,Temps1,J1),gagnantStat(NbCoup2,Temps2,J2).
 
-gagnantStat(NbCoup,[X|Temps]) :-  writeln('Le joueur '),writeln(X), writeln(NbCoup),moyenne(Temps,M), writeln('moyenne de temps de ses coups'),writeln(M).
+gagnantStat(NbCoup,Temps,J) :-  write('Le joueur '),writeln(J), writeln(NbCoup),moyenne(Temps,M), writeln('moyenne de temps de ses coups'),writeln(M).
+
 
 size([],0).
 size([T|R],S) :- size(R,U), S is U+1.
