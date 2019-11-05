@@ -106,5 +106,5 @@ indice(X, M, [_ | L]) :- indice(X, K, L), M is K + 1.
 
 indice_coup_choisi(A,L,J,K):-liste_nbVoisins(A,L,J,C), max(C,I2),   indice(I2, K, C),!.
 
-attaque(L,A,J,C3):-indice_coup_choisi(A,L,J,K),trouverElement(K,C3,A) .
+heuristique1(L,A,J,C3):-indice_coup_choisi(A,L,J,K),trouverElement(K,C3,A) .
 
