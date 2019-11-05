@@ -7,7 +7,7 @@
 % d'attaque et donc d'aligner le plus grand nombre de pions possibles
 % pour le joueur J
 
-attaque(G,LCP,J,C):-random_member(C1,LCP),parcoursLCP(G,LCP,J,C1,0,C).
+heuristique2(G,LCP,J,C):-random_member(C1,LCP),parcoursLCP(G,LCP,J,C1,0,C).
 
 % Parcourir la liste des coups possibles LCP, en regardant pour chaque
 % coup possible C de la liste LCP le nombre maximal de pions
