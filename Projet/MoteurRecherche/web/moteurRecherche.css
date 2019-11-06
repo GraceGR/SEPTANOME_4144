@@ -1,0 +1,36 @@
+
+body{
+	background-color: white;
+}
+
+#singer{
+	font-size: 100px;
+	font-weight: bold;
+	margin : 13% 0% 0% 0%;
+	text-align: center;
+}
+
+#saisie {
+	width: 350px;
+	margin : 10px;
+	border-radius: 10px;
+	border-color : #d8d8d8;
+	height: 30px; 	
+}
+
+#champs{
+	margin: 0% 40% 0% 40%;
+	width : 100px;
+}
+
+#bouton{
+	margin: 0% 47% 0% 47%;
+	width : 100px;
+}
+
+#recherche{
+	border-radius: 3px;
+	border-color : #d8d8d8;
+	height: 30px;
+}
+

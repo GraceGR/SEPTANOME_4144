@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+    
+    
+    <head>
+        <meta charset="utf-8">
+        <title>Wikisinger</title>
+        <link rel="stylesheet" href="moteurRecherche.css" type="text/css"/>
+    </head>
+
+    <body>
+        <p id="singer">
+            <span style="color:#3076fa;">S</span>
+            <span style="color:#ff2626;">i</span>
+            <span style="color:#fec028;">n</span>
+            <span style="color:#3076fa;">g</span>
+            <span style="color:#27a84c;">e</span>
+            <span style="color:#ff2626;">r</span>
+        </p>
+        <div id="champs">
+            <input type="text" id="saisie">
+        </div>
+        <div id="bouton">
+            <button id="recherche" onclick="rechercher()">Recherche</button>
+        </div>
+        <table id="tab" border=1>
+            <tr>
+                <th>Nom complet</th>
+                <th>Nom de famille</th>
+                <th>Description</th>
+            </tr>
+        </table>
+        
+
+        <script src="http://code.jquery.com/jquery-git2.js"></script>
+        <script type="text/javascript">
+            
+            var chanteur;
+            var query;
+            var url;
+            function rechercher() {
+                $('#tab').empty();
+                $('#tab').append("<tr><th>Nom complet</th><th>Nom de famille</th><th>Description</th></tr>");
+                chanteur = document.getElementById("saisie").value;
+            
+                //Creation de la requete
+                query = encodeURIComponent(
+                    'prefix dbo:<http://dbpedia.org/ontology/>'+
+                    'prefix foaf:<http://xmlns.com/foaf/0.1/>'+
+
+                    'select distinct ?name ?surname ?description where {'+
+                    '?chanteur a dbo:MusicalArtist.'+
+                    '?chanteur foaf:name ?name.'+
+                    '?chanteur foaf:surname ?surname.'+
+                    '?chanteur dbo:abstract ?description.'+
+                    "FILTER (regex(?name, '.*"+chanteur+".*') && langMatches(lang(?description),'EN'))"+
+                    '} LIMIT 100'
+        );
+
+                //Definition de l'URL (recuperation des données sous format json)
+                url = 'http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query=' + query + '&output=json';
+                console.log(url);
+                $.getJSON(url + "&callback=?", function (resultats) {
+                    console.log(resultats);
+                        $(resultats.results.bindings).each(function (i) {
+                            
+                            $('#tab').append("<tr><td>" + resultats.results.bindings[i].name.value + "</td>"+
+                             "<td>" + resultats.results.bindings[i].surname.value + "</td>"+
+                             "<td>" + resultats.results.bindings[i].description.value +"</td></tr>")
+                    });
+                });    
+                
+            }
+
+        </script>
+
+    </body>
+
+</html>
