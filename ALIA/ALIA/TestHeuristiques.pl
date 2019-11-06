@@ -1,5 +1,5 @@
 :-use_module(puissance4).
-:- use_module(h1).
+:-use_module(h1).
 :-use_module(h2).
 :-use_module(h3).
 :-use_module(h4).
