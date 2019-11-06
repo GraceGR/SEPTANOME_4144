@@ -9,7 +9,7 @@
 :- use_module(h2).
 :- use_module(h3).
 :- use_module(h4).
-
+:- use_module(h5).
 
 %%%%Commencer le jeu  : Initialisation de la grille et de la lcp
 %grille de depart de 6*7 vide.
